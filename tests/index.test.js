@@ -1,33 +1,34 @@
-var proxyquire = require('proxyquire');
-var sinon = require('sinon');
-var supertest = require('supertest');
+var proxyquire = require('proxyquire')
+var sinon = require('sinon')
+var supertest = require('supertest')
 
-var express = require('express');
+var express = require('express')
 
 describe('GET /hello', () => {
-	let app, request, responseStub, route;
+	let app, request, responseStub, route
 
 	beforeEach(() => {
-		responseStub = sinon.stub();
-		app = express();
-		route = proxyquire('../controllers/index.js', {});
-        // route = proxyquire
-        route(app);
-		request = supertest(app);
-	});
+		responseStub = sinon.stub()
+		app = express()
+		route = proxyquire('../controllers/index.js', {})
+		route(app)
+		request = supertest(app)
+	})
 
 	it('Should respond with status code 200 and message "world"', (done) => {
-        const expectedRessult = {
+		const expectedRessult = {
 			message: 'world',
 		}
-		responseStub.returns(expectedRessult);
+		responseStub.returns(expectedRessult)
 
 		request
 			.get('/hello')
 			.expect('Content-Type', /json/)
-			.expect(200, (err, res) => {
-				expect(res.body).toEqual(expectedRessult);
-				done();
-			});
-	});
-});
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toEqual(expectedRessult)
+				done()
+			})
+			.catch((err) => done(err))
+	})
+})

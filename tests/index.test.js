@@ -32,3 +32,24 @@ describe('GET /hello', () => {
 			.catch((err) => done(err))
 	})
 })
+
+describe('POST /hello', () => {
+	let app, request, route
+
+	beforeEach(() => {
+		app = express()
+		route = proxyquire('../controllers/index.js', {})
+		route(app)
+		request = supertest(app)
+	})
+
+	it('Should respond with status 404', (done) => {
+		request
+			.post('/hello')
+			.expect(404)
+            .then(() => {
+                done()
+            })
+            .catch((err) => done(err))
+	})
+})

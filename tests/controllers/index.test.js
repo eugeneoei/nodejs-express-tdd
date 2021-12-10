@@ -5,10 +5,9 @@ var supertest = require('supertest')
 var express = require('express')
 
 describe('GET /hello', () => {
-    let app, request, responseStub, route
+    let app, request, route
 
     beforeEach(() => {
-        // responseStub = sinon.stub()
         app = express()
         route = proxyquire('../../controllers/index.js', {})
         route(app)
@@ -19,7 +18,6 @@ describe('GET /hello', () => {
         const expectedRessult = {
             message: 'world',
         }
-        // responseStub.returns(expectedRessult)
 
         request
             .get('/hello')

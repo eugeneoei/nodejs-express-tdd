@@ -20,6 +20,7 @@ describe('Users Controller', () => {
     })
 
     describe('POST /users', () => {
+        // todo: add test case caught in catch block
         it('Should create a user and respond with status code 201 and user object', (done) => {
             const input = {
                 email: 'jon.doe@email.com',

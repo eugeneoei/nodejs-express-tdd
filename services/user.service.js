@@ -9,7 +9,6 @@ class UserService {
     }
 
     updateUserInfo(id) {
-        console.log('updateUserInfo')
         return 1
     }
 }

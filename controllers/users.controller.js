@@ -19,6 +19,17 @@ const usersController = (app) => {
             })
         }
     })
+
+    router.get('/users', (req, res) => {
+        try {
+            const users = userService.getAllUsers()
+            res.status(200).json(users)
+        } catch (error) {
+            res.status(400).json({
+                [error.name]: error.message
+            })
+        }
+    })
 }
 
 module.exports = usersController

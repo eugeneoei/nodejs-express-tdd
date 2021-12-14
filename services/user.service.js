@@ -7,6 +7,17 @@ class UserService {
             lastName,
         }
     }
+
+    getAllUsers() {
+        return [
+            {
+                id: 1,
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+            }
+        ]
+    }
 }
 
 module.exports = UserService

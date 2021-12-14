@@ -4,6 +4,7 @@ const supertest = require('supertest')
 const app = require('../mocks/express.mock')
 const usersController = require('../../controllers/users.controller')
 const UserService = require('../../services/user.service')
+const usersStub = require('./stubs/users.stub')
 
 describe('Users Controller', () => {
     let request
@@ -46,12 +47,14 @@ describe('Users Controller', () => {
                 .then((res) => {
                     expect(res.status).toBe(201)
                     expect(res.body).toEqual(expectedResult)
-                    expect(createUserStub.calledOnceWithExactly(
-                        payload.email,
-                        payload.firstName,
-                        payload.lastName,
-                        payload.password
-                    )).toBe(true)
+                    expect(
+                        createUserStub.calledOnceWithExactly(
+                            payload.email,
+                            payload.firstName,
+                            payload.lastName,
+                            payload.password
+                        )
+                    ).toBe(true)
                     done()
                 })
                 .catch((err) => done(err))
@@ -73,6 +76,55 @@ describe('Users Controller', () => {
             request
                 .post('/users')
                 .send(payload)
+                .then((res) => {
+                    expect(res.status).toBe(400)
+                    expect(res.body).toEqual(expectedResult)
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+    })
+
+    describe('GET /users', () => {
+        let getAllUsersStub
+        beforeAll(() => {
+            getAllUsersStub = sinon.stub(UserService.prototype, 'getAllUsers')
+        })
+
+        afterEach(() => {
+            getAllUsersStub.reset()
+        })
+
+        it('Should return all users and respond with status code 200', (done) => {
+            const expectedResult = usersStub
+            const expectedProperties = Object.keys(usersStub[0])
+            getAllUsersStub.returns(usersStub)
+
+            request
+                .get('/users')
+                .then((res) => {
+                    const users = res.body
+                    expect(res.status).toBe(200)
+                    expect(getAllUsersStub.calledOnce).toBeTruthy()
+                    expect(users).toEqual(expectedResult)
+                    expect(users).toHaveLength(expectedResult.length)
+                    users.forEach((user) => {
+                        expect(Object.keys(user)).toEqual(expectedProperties)
+                    })
+                    expect(res.body)
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+
+        it('Should fail to return all users and respond with status code 400', (done) => {
+            const expectedResult = {
+                Error: 'Something went wrong!',
+            }
+            getAllUsersStub.throws(() => new Error('Something went wrong!'))
+
+            request
+                .get('/users')
                 .then((res) => {
                     expect(res.status).toBe(400)
                     expect(res.body).toEqual(expectedResult)

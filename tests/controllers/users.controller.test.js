@@ -212,7 +212,10 @@ describe('Users Controller', () => {
         let updateUserInfoStub
 
         beforeAll(() => {
-            updateUserInfoStub = sinon.stub(UserService.prototype, 'updateUserInfo')
+            updateUserInfoStub = sinon.stub(
+                UserService.prototype,
+                'updateUserInfo'
+            )
         })
 
         afterEach(() => {
@@ -228,7 +231,7 @@ describe('Users Controller', () => {
                 lastName: 'Jane Update',
             }
             const payload = {
-                lastName: 'Jane Update'
+                lastName: 'Jane Update',
             }
             updateUserInfoStub.returns(expectedResult)
 
@@ -255,7 +258,7 @@ describe('Users Controller', () => {
                 error: 'User not found.',
             }
             const payload = {
-                lastName: 'Jane Update'
+                lastName: 'Jane Update',
             }
             updateUserInfoStub.returns(null)
 
@@ -277,7 +280,7 @@ describe('Users Controller', () => {
                 Error: 'Something went wrong!',
             }
             const payload = {
-                lastName: 'Jane Update'
+                lastName: 'Jane Update',
             }
             updateUserInfoStub.throws(() => new Error('Something went wrong!'))
 

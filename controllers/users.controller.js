@@ -5,7 +5,6 @@ const usersController = (app) => {
     const router = express.Router()
     const userService = new UserService()
 
-    app.use(express.json())
     app.use(router)
 
     router.post('/users', (req, res) => {

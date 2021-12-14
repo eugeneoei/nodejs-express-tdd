@@ -8,9 +8,15 @@ const authController = (app) => {
     app.use('/auth', router)
 
     router.post('/register', (req, res) => {
-        const { email, firstName, lastName, password } = req.body
-        const user = authService.createUser(email, firstName, lastName, password)
-        res.status(201).json(user)
+        try {
+            const { email, firstName, lastName, password } = req.body
+            const user = authService.createUser(email, firstName, lastName, password)
+            res.status(201).json(user)
+        } catch (error) {
+            res.status(400).json({
+                [error.name]: error.message
+            })
+        }
     })
 }
 

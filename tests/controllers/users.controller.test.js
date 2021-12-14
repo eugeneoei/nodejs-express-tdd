@@ -25,40 +25,40 @@ describe('Users Controller', () => {
             createUserStub.reset()
         })
 
-        it('Should create a user and respond with status code 201 and user object', (done) => {
-            const payload = {
-                email: 'jon.doe@email.com',
-                firstName: 'Jon',
-                lastName: 'Doe',
-                password: 'password1',
-                confirmPassword: 'password1',
-            }
-            const expectedResult = {
-                id: '1',
-                email: 'jon.doe@email.com',
-                firstName: 'Jon',
-                lastName: 'Doe',
-            }
-            createUserStub.returns(expectedResult)
+        // it('Should create a user and respond with status code 201 and user object', (done) => {
+        //     const payload = {
+        //         email: 'jon.doe@email.com',
+        //         firstName: 'Jon',
+        //         lastName: 'Doe',
+        //         password: 'password1',
+        //         confirmPassword: 'password1',
+        //     }
+        //     const expectedResult = {
+        //         id: '1',
+        //         email: 'jon.doe@email.com',
+        //         firstName: 'Jon',
+        //         lastName: 'Doe',
+        //     }
+        //     createUserStub.returns(expectedResult)
 
-            request
-                .post('/users')
-                .send(payload)
-                .then((res) => {
-                    expect(res.status).toBe(201)
-                    expect(res.body).toEqual(expectedResult)
-                    expect(
-                        createUserStub.calledOnceWithExactly(
-                            payload.email,
-                            payload.firstName,
-                            payload.lastName,
-                            payload.password
-                        )
-                    ).toBe(true)
-                    done()
-                })
-                .catch((err) => done(err))
-        })
+        //     request
+        //         .post('/users')
+        //         .send(payload)
+        //         .then((res) => {
+        //             expect(res.status).toBe(201)
+        //             expect(res.body).toEqual(expectedResult)
+        //             expect(
+        //                 createUserStub.calledOnceWithExactly(
+        //                     payload.email,
+        //                     payload.firstName,
+        //                     payload.lastName,
+        //                     payload.password
+        //                 )
+        //             ).toBe(true)
+        //             done()
+        //         })
+        //         .catch((err) => done(err))
+        // })
 
         it('Should fail to create a user and respond with status code 400', (done) => {
             const payload = {

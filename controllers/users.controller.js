@@ -33,7 +33,23 @@ const usersController = (app) => {
 
     router.get('/users/:userId', (req, res) => {
         try {
-            const user = userService.getUserById(req.params.id)
+            const user = userService.getUserById(req.params.userId)
+            if (!user) {
+                return res.status(404).json({
+                    error: 'User not found.'
+                })
+            }
+            res.status(200).json(user)
+        } catch (error) {
+            res.status(400).json({
+                [error.name]: error.message
+            })
+        }
+    })
+
+    router.patch('/users/:userId', (req, res) => {
+        try {
+            const user = userService.updateUserInfo(req.params.userId)
             if (!user) {
                 return res.status(404).json({
                     error: 'User not found.'

@@ -6,19 +6,24 @@ const usersController = require('../../controllers/users.controller')
 const UserService = require('../../services/user.service')
 
 describe('Users Controller', () => {
-    let request, createUserStub
+    let request
 
     beforeAll(() => {
-        createUserStub = sinon.stub(UserService.prototype, 'createUser')
         usersController(app)
         request = supertest(app)
     })
 
-    afterEach(() => {
-        createUserStub.reset()
-    })
-
     describe('POST /users', () => {
+        let createUserStub
+
+        beforeAll(() => {
+            createUserStub = sinon.stub(UserService.prototype, 'createUser')
+        })
+
+        afterEach(() => {
+            createUserStub.reset()
+        })
+
         it('Should create a user and respond with status code 201 and user object', (done) => {
             const payload = {
                 email: 'jon.doe@email.com',

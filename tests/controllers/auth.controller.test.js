@@ -43,7 +43,7 @@ describe('Auth controller', () => {
             createUserStub.returns(expectedResult)
 
             request
-            .post('/auth/register')
+                .post('/auth/register')
                 .send(payload)
                 .then((res) => {
                     expect(res.status).toBe(201)
@@ -56,6 +56,29 @@ describe('Auth controller', () => {
                             payload.password
                         )
                     ).toBe(true)
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+
+        it('Should fail to create a user and respond with status code 400', (done) => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+                password: 'password1',
+                confirmPassword: 'password1',
+            }
+            const expectedResult = {
+                Error: 'Something went wrong!',
+            }
+            createUserStub.throws(() => new Error('Something went wrong!'))
+
+            request
+                .post('/auth/register')
+                .send(payload)
+                .then((res) => {
+                    expect(res.status).toBe(400)
                     done()
                 })
                 .catch((err) => done(err))

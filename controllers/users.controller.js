@@ -30,6 +30,22 @@ const usersController = (app) => {
             })
         }
     })
+
+    router.get('/users/:userId', (req, res) => {
+        try {
+            const user = userService.getUserById(req.params.id)
+            if (!user) {
+                return res.status(404).json({
+                    error: 'User not found.'
+                })
+            }
+            res.status(200).json(user)
+        } catch (error) {
+            res.status(400).json({
+                [error.name]: error.message
+            })
+        }
+    })
 }
 
 module.exports = usersController

@@ -34,7 +34,7 @@ describe('Users Controller', () => {
                 confirmPassword: 'password1',
             }
             const expectedResult = {
-                id: 1,
+                id: '1',
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
@@ -87,6 +87,7 @@ describe('Users Controller', () => {
 
     describe('GET /users', () => {
         let getAllUsersStub
+
         beforeAll(() => {
             getAllUsersStub = sinon.stub(UserService.prototype, 'getAllUsers')
         })
@@ -111,7 +112,6 @@ describe('Users Controller', () => {
                     users.forEach((user) => {
                         expect(Object.keys(user)).toEqual(expectedProperties)
                     })
-                    expect(res.body)
                     done()
                 })
                 .catch((err) => done(err))
@@ -127,6 +127,80 @@ describe('Users Controller', () => {
                 .get('/users')
                 .then((res) => {
                     expect(res.status).toBe(400)
+                    expect(res.body).toEqual(expectedResult)
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+    })
+
+    describe('GET /users/:userId', () => {
+        let getUserByIdStub
+
+        beforeAll(() => {
+            getUserByIdStub = sinon.stub(UserService.prototype, 'getUserById')
+        })
+
+        afterEach(() => {
+            getUserByIdStub.reset()
+        })
+
+        it('Should return a user object that matches given id in url params and respond with status code 200', (done) => {
+            const expectedResult = {
+                id: '2',
+                email: 'mary.jane@email.com',
+                firstName: 'Mary',
+                lastName: 'Jane',
+            }
+            const userIdToGet = '2'
+            getUserByIdStub.returns(expectedResult)
+
+            request
+                .get(`/users/${userIdToGet}`)
+                .then((res) => {
+                    const user = res.body
+                    expect(res.status).toBe(200)
+                    expect(getUserByIdStub.calledOnce).toBeTruthy()
+                    expect(user).toEqual(expectedResult)
+                    expect(user.id).toBe(userIdToGet)
+                    expect(user.email).toBeDefined()
+                    expect(user.firstName).toBeDefined()
+                    expect(user.lastName).toBeDefined()
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+
+        it('Should return status code 404 if user is not found based on given id in url params', (done) => {
+            const userIdToGet = '2'
+            const expectedResult = {
+                error: 'User not found.',
+            }
+            getUserByIdStub.returns(null)
+
+            request
+                .get(`/users/${userIdToGet}`)
+                .then((res) => {
+                    expect(res.status).toBe(404)
+                    expect(getUserByIdStub.calledOnce).toBeTruthy()
+                    expect(res.body).toEqual(expectedResult)
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+
+        it('Should fail to return user object and respond with status code 404', (done) => {
+            const userIdToGet = '2'
+            const expectedResult = {
+                Error: 'Something went wrong!',
+            }
+            getUserByIdStub.throws(() => new Error('Something went wrong!'))
+
+            request
+                .get(`/users/${userIdToGet}`)
+                .then((res) => {
+                    expect(res.status).toBe(400)
+                    expect(getUserByIdStub.calledOnce).toBeTruthy()
                     expect(res.body).toEqual(expectedResult)
                     done()
                 })

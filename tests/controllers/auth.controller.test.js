@@ -3,7 +3,7 @@ const supertest = require('supertest')
 
 const app = require('../mocks/express.mock')
 const authController = require('../../controllers/auth.controller')
-const UserService = require('../../services/user.service')
+const AuthService = require('../../services/auth.service')
 
 describe('Auth controller', () => {
 
@@ -19,7 +19,7 @@ describe('Auth controller', () => {
         let createUserStub
 
         beforeAll(() => {
-            createUserStub = sinon.stub(UserService.prototype, 'createUser')
+            createUserStub = sinon.stub(AuthService.prototype, 'createUser')
         })
 
         afterEach(() => {

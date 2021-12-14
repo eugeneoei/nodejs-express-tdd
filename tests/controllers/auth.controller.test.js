@@ -79,6 +79,7 @@ describe('Auth controller', () => {
                 .send(payload)
                 .then((res) => {
                     expect(res.status).toBe(400)
+                    expect(res.body).toEqual(expectedResult)
                     done()
                 })
                 .catch((err) => done(err))

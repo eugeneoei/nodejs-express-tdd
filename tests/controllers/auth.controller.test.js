@@ -70,7 +70,7 @@ describe('Auth controller', () => {
                 confirmPassword: 'password1',
             }
             const expectedResult = {
-                Error: 'Something went wrong!',
+                error: 'Something went wrong!',
             }
             createUserStub.throws(() => new Error('Something went wrong!'))
 

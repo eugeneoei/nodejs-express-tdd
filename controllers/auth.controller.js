@@ -14,7 +14,7 @@ const authController = (app) => {
             res.status(201).json(user)
         } catch (error) {
             res.status(400).json({
-                [error.name]: error.message
+                error: error.message
             })
         }
     })

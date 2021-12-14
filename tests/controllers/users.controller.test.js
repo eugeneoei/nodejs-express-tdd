@@ -48,7 +48,7 @@ describe('Users Controller', () => {
 
         it('Should fail to return all users and respond with status code 400', (done) => {
             const expectedResult = {
-                Error: 'Something went wrong!',
+                error: 'Something went wrong!',
             }
             getAllUsersStub.throws(() => new Error('Something went wrong!'))
 
@@ -121,7 +121,7 @@ describe('Users Controller', () => {
         it('Should fail to return user object and respond with status code 404', (done) => {
             const userIdToGet = '2'
             const expectedResult = {
-                Error: 'Something went wrong!',
+                error: 'Something went wrong!',
             }
             getUserByIdStub.throws(() => new Error('Something went wrong!'))
 
@@ -206,7 +206,7 @@ describe('Users Controller', () => {
         it('Should fail to return updated user object and respond with status code 404', (done) => {
             const userIdOfUserToUpdate = '2'
             const expectedResult = {
-                Error: 'Something went wrong!',
+                error: 'Something went wrong!',
             }
             const payload = {
                 lastName: 'Jane Update',

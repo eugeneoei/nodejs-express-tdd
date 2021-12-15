@@ -7,7 +7,7 @@ class AuthService {
     }
 
     createUser(email, firstName, lastName, password) {
-        const user = this.userRepository.createUser()
+        const user = this.userRepository.createUser(email, firstName, lastName, password)
         return user
     }
 

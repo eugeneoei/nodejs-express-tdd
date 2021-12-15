@@ -134,6 +134,9 @@ describe('Auth controller', () => {
                 email: 'jon.doe@email.com',
                 password: 'password1',
             }
+            const expectedResult = {
+                error: 'Invalid email or password.'
+            }
             generateTokensStub.throws(() => new Error('Invalid email or password.'))
 
             request
@@ -141,6 +144,7 @@ describe('Auth controller', () => {
                 .send(payload)
                 .then((res) => {
                     expect(res.status).toBe(400)
+                    expect(res.body).toEqual(expectedResult)
                     done()
                 })
                 .catch((err) => done(err))

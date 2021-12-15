@@ -85,11 +85,13 @@ describe('Auth controller', () => {
     })
 
     describe('POST /auth/login', () => {
-
         let generateTokensStub
 
         beforeAll(() => {
-            generateTokensStub = sinon.stub(AuthService.prototype, 'generateTokens')
+            generateTokensStub = sinon.stub(
+                AuthService.prototype,
+                'generateTokens'
+            )
         })
 
         afterEach(() => {
@@ -116,10 +118,29 @@ describe('Auth controller', () => {
                     expect(tokens).toEqual(expectedResult)
                     expect(tokens.accessToken).toBeDefined()
                     expect(tokens.refreshToken).toBeDefined()
-                    expect(generateTokensStub.calledOnceWithExactly(
-                        payload.email,
-                        payload.password
-                    ))
+                    expect(
+                        generateTokensStub.calledOnceWithExactly(
+                            payload.email,
+                            payload.password
+                        )
+                    )
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+
+        it('Should fail to return tokens if email and password in payload are invalid and respond with status code 400 and "Invalid email or password." message', (done) => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                password: 'password1',
+            }
+            generateTokensStub.throws(() => new Error('Invalid email or password.'))
+
+            request
+                .post('/auth/login')
+                .send(payload)
+                .then((res) => {
+                    expect(res.status).toBe(400)
                     done()
                 })
                 .catch((err) => done(err))

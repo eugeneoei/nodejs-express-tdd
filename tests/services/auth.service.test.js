@@ -67,10 +67,22 @@ describe('Auth Service', () => {
     })
 
     describe('generateToken method', () => {
+
         it('Should return access and refresh token when called', () => {
-            const response = authService.generateTokens()
+            const payload = {
+                id: '123'
+            }
+            const expectedResult = {
+                accessToken: 'qwe123',
+                refreshToken: 'asd123'
+            }
+
+            const response = authService.generateTokens(payload)
 
             expect(response).toBeTruthy()
+            expect(response.accessToken).toBeDefined()
+            expect(response.refreshToken).toBeDefined()
+            expect(response).toEqual(expectedResult)
         })
     })
 })

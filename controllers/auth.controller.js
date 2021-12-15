@@ -1,4 +1,5 @@
 const express = require('express')
+const res = require('express/lib/response')
 const AuthService = require('../services/auth.service')
 
 const authController = (app) => {
@@ -17,6 +18,10 @@ const authController = (app) => {
                 error: error.message
             })
         }
+    })
+
+    router.post('/login', (req, res) => {
+        res.status(200).send()
     })
 }
 

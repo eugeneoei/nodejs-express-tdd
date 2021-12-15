@@ -86,14 +86,14 @@ describe('Auth controller', () => {
 
     describe('POST /auth/login', () => {
 
-        let generateToknStub
+        let generateTokensStub
 
         beforeAll(() => {
-            generateToknStub = sinon.stub(AuthService.prototype, 'generateTokens')
+            generateTokensStub = sinon.stub(AuthService.prototype, 'generateTokens')
         })
 
         afterEach(() => {
-            generateToknStub.reset()
+            generateTokensStub.reset()
         })
 
         it('Should return an access token and refresh token if provided credentials are valid', (done) => {
@@ -115,7 +115,7 @@ describe('Auth controller', () => {
                     expect(tokens).toEqual(expectedResult)
                     expect(tokens.accessToken).toBeDefined()
                     expect(tokens.refreshToken).toBeDefined()
-                    expect(generateToknStub.calledOnceWithExactly(
+                    expect(generateTokensStub.calledOnceWithExactly(
                         payload.email,
                         payload.password
                     ))

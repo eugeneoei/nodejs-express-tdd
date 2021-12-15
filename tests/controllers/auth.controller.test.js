@@ -105,6 +105,7 @@ describe('Auth controller', () => {
                 accessToken: 'asd123',
                 refreshToken: 'qwe123',
             }
+            generateTokensStub.returns(expectedResult)
 
             request
                 .post('/auth/login')

@@ -11,6 +11,22 @@ class AuthService {
         return user
     }
 
+    /**
+     *
+     * @returns user object
+     */
+    verifyPassword(email, password) {
+        /**
+         * TODO: calls userRepository to retrieve user by email and verify that password is correct
+         */
+        return {
+            id: '1',
+            email: 'jon.doe@email.com',
+            firstName: 'Jon',
+            lastName: 'Doe',
+        }
+    }
+
     generateTokens(payload) {
         /**
          * TODO: implement JWT

@@ -30,7 +30,7 @@ describe('Auth Service', () => {
         })
 
         it('Should call createUser method in userRepository and return new user object', () => {
-            expect(userRepositoryCreateUserStub.calledOnce()).toBeTruthy()
+            expect(userRepositoryCreateUserStub.calledOnce).toBeTruthy()
         })
     })
 })

@@ -12,6 +12,9 @@ class AuthService {
     }
 
     generateTokens(payload) {
+        /**
+         * TODO: implement JWT
+         */
         return {
             accessToken: 'qwe123',
             refreshToken: 'asd123'

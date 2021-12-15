@@ -11,8 +11,11 @@ class AuthService {
         return user
     }
 
-    generateTokens(email, password) {
-        return 1
+    generateTokens(payload) {
+        return {
+            accessToken: 'qwe123',
+            refreshToken: 'asd123'
+        }
     }
 }
 

@@ -85,17 +85,22 @@ describe('Auth controller', () => {
     })
 
     describe('POST /auth/login', () => {
-        let generateTokensStub
+        let generateTokensStub, verifyPasswordStub
 
         beforeAll(() => {
             generateTokensStub = sinon.stub(
                 AuthService.prototype,
                 'generateTokens'
             )
+            verifyPasswordStub = sinon.stub(
+                AuthService.prototype,
+                'verifyPassword'
+            )
         })
 
         afterEach(() => {
             generateTokensStub.reset()
+            verifyPasswordStub.reset()
         })
 
         it('Should return an access token and refresh token if provided credentials are valid', (done) => {
@@ -103,11 +108,18 @@ describe('Auth controller', () => {
                 email: 'jon.doe@email.com',
                 password: 'password1',
             }
-            const expectedResult = {
+            const expectedTokensResult = {
                 accessToken: 'asd123',
                 refreshToken: 'qwe123',
             }
-            generateTokensStub.returns(expectedResult)
+            const expectedUserResult = {
+                id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+            }
+            verifyPasswordStub.returns(true)
+            generateTokensStub.returns(expectedTokensResult)
 
             request
                 .post('/auth/login')
@@ -115,15 +127,18 @@ describe('Auth controller', () => {
                 .then((res) => {
                     const tokens = res.body
                     expect(res.status).toBe(200)
-                    expect(tokens).toEqual(expectedResult)
+                    expect(verifyPasswordStub.calledOnceWithExactly(
+                        payload.email,
+                        payload.password,
+                    ))
+                    expect(
+                        generateTokensStub.calledOnceWithExactly({
+                            id: expectedUserResult.id
+                        })
+                    ).toBeTruthy()
+                    expect(tokens).toEqual(expectedTokensResult)
                     expect(tokens.accessToken).toBeDefined()
                     expect(tokens.refreshToken).toBeDefined()
-                    expect(
-                        generateTokensStub.calledOnceWithExactly(
-                            payload.email,
-                            payload.password
-                        )
-                    )
                     done()
                 })
                 .catch((err) => done(err))

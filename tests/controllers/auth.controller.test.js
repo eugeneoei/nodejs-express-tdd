@@ -4,9 +4,9 @@ const supertest = require('supertest')
 const app = require('../mocks/express.mock')
 const authController = require('../../controllers/auth.controller')
 const AuthService = require('../../services/auth.service')
+const { join } = require('./stubs/users.stub')
 
 describe('Auth controller', () => {
-
     let request
 
     beforeAll(() => {
@@ -15,7 +15,6 @@ describe('Auth controller', () => {
     })
 
     describe('POST /auth/register', () => {
-
         let createUserStub
 
         beforeAll(() => {
@@ -84,7 +83,27 @@ describe('Auth controller', () => {
                 })
                 .catch((err) => done(err))
         })
-
     })
 
+    describe('POST /auth/login', () => {
+        it('Should return an access token and refresh token if provided credentials are valid', (done) => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                password: 'password1',
+            }
+            const expectedResult = {
+                accessToken: 'asd123',
+                refreshToken: 'qwe123',
+            }
+
+            request
+                .post('/auth/login')
+                .send(payload)
+                .then((res) => {
+                    expect(res.status).toBe(200)
+                    done()
+                })
+                .catch((err) => done(err))
+        })
+    })
 })

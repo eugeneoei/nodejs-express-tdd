@@ -4,7 +4,6 @@ const supertest = require('supertest')
 const app = require('../mocks/express.mock')
 const authController = require('../../controllers/auth.controller')
 const AuthService = require('../../services/auth.service')
-const { join } = require('./stubs/users.stub')
 
 describe('Auth controller', () => {
     let request
@@ -86,6 +85,17 @@ describe('Auth controller', () => {
     })
 
     describe('POST /auth/login', () => {
+
+        let generateToknStub
+
+        beforeAll(() => {
+            generateToknStub = sinon.stub(AuthService.prototype, 'generateTokens')
+        })
+
+        afterEach(() => {
+            generateToknStub.reset()
+        })
+
         it('Should return an access token and refresh token if provided credentials are valid', (done) => {
             const payload = {
                 email: 'jon.doe@email.com',
@@ -100,7 +110,15 @@ describe('Auth controller', () => {
                 .post('/auth/login')
                 .send(payload)
                 .then((res) => {
+                    const tokens = res.body
                     expect(res.status).toBe(200)
+                    expect(tokens).toEqual(expectedResult)
+                    expect(tokens.accessToken).toBeDefined()
+                    expect(tokens.refreshToken).toBeDefined()
+                    expect(generateToknStub.calledOnceWithExactly(
+                        payload.email,
+                        payload.password
+                    ))
                     done()
                 })
                 .catch((err) => done(err))

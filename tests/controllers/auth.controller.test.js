@@ -118,7 +118,7 @@ describe('Auth controller', () => {
                 firstName: 'Jon',
                 lastName: 'Doe',
             }
-            verifyPasswordStub.returns(true)
+            verifyPasswordStub.returns(expectedUserResult)
             generateTokensStub.returns(expectedTokensResult)
 
             request
@@ -152,7 +152,7 @@ describe('Auth controller', () => {
             const expectedResult = {
                 error: 'Invalid email or password.'
             }
-            generateTokensStub.throws(() => new Error('Invalid email or password.'))
+            verifyPasswordStub.throws(() => new Error('Invalid email or password.'))
 
             request
                 .post('/auth/login')

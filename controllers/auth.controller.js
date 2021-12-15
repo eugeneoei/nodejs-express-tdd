@@ -20,9 +20,15 @@ const authController = (app) => {
     })
 
     router.post('/login', (req, res) => {
-        const { email, password } = req.body
-        const tokens = authService.generateTokens(email, password)
-        res.status(200).send(tokens)
+        try {
+            const { email, password } = req.body
+            const tokens = authService.generateTokens(email, password)
+            res.status(200).send(tokens)
+        } catch (error) {
+            res.status(400).json({
+                error: error.message
+            })
+        }
     })
 }
 

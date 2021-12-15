@@ -54,14 +54,23 @@ describe('Auth Service', () => {
             /**
              * Question: should response object properties to be tested with toBeDefined or comparing whole object would be suitable?
              */
-            expect(userRepositoryCreateUserStub.calledOnceWithExactly(
-                payload.email,
-                payload.firstName,
-                payload.lastName,
-                payload.password
-            )).toBeTruthy()
+            expect(
+                userRepositoryCreateUserStub.calledOnceWithExactly(
+                    payload.email,
+                    payload.firstName,
+                    payload.lastName,
+                    payload.password
+                )
+            ).toBeTruthy()
             expect(response).toEqual(expectedResult)
+        })
+    })
 
+    describe('generateToken method', () => {
+        it('Should return access and refresh token when called', () => {
+            const response = authService.generateTokens()
+
+            expect(response).toBeTruthy()
         })
     })
 })

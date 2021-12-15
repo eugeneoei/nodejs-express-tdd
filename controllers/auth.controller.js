@@ -1,5 +1,4 @@
 const express = require('express')
-const res = require('express/lib/response')
 const AuthService = require('../services/auth.service')
 
 const authController = (app) => {
@@ -21,7 +20,9 @@ const authController = (app) => {
     })
 
     router.post('/login', (req, res) => {
-        res.status(200).send()
+        const { email, password } = req.body
+        const tokens = authService.generateTokens(email, password)
+        res.status(200).send(tokens)
     })
 }
 

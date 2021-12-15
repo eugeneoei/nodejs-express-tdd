@@ -30,6 +30,20 @@ describe('Auth Service', () => {
         })
 
         it('Should call createUser method in userRepository and return new user object', () => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+                password: 'password1',
+            }
+
+            authService.createUser(
+                payload.email,
+                payload.firstName,
+                payload.lastName,
+                payload.password
+            )
+
             expect(userRepositoryCreateUserStub.calledOnce).toBeTruthy()
         })
     })

@@ -19,33 +19,38 @@ describe('Auth Service', () => {
     })
 
     describe('createUser method', () => {
-        let userRepositoryCreateUserStub
+        let userRepositoryCreateUserStub, authServiceHashPasswordSpy
 
         beforeAll(() => {
             userRepositoryCreateUserStub = sinon.stub(
                 UserRepository.prototype,
                 'createUser'
             )
+            authServiceHashPasswordSpy = sinon.spy(
+                AuthService.prototype,
+                'hashPassword'
+            )
         })
 
         afterEach(() => {
             userRepositoryCreateUserStub.reset()
+            authServiceHashPasswordSpy.reset()
         })
 
-        it('Should call createUser method in userRepository and return new user object', () => {
+        it('Should call createUser method in userRepository and hashPassword method in authService and return new user object', () => {
             const payload = {
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
                 password: 'password1',
             }
-            const expectedResult = {
+            const expectedUserResult = {
                 id: '1',
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
             }
-            userRepositoryCreateUserStub.returns(expectedResult)
+            userRepositoryCreateUserStub.returns(expectedUserResult)
 
             const response = authService.createUser(
                 payload.email,
@@ -65,7 +70,12 @@ describe('Auth Service', () => {
                     payload.password
                 )
             ).toBeTruthy()
-            expect(response).toEqual(expectedResult)
+            expect(
+                authServiceHashPasswordSpy.calledOnceWithExactly(
+                    payload.password
+                )
+            ).toBeTruthy()
+            expect(response).toEqual(expectedUserResult)
         })
     })
 
@@ -86,18 +96,21 @@ describe('Auth Service', () => {
         it('Should return user object if given credentials are valid', () => {
             const payload = {
                 email: 'jon.doe@email.com',
-                password: 'password1'
+                password: 'password1',
             }
             const expectedResult = {
                 id: '1',
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
-                password: '123dj4*#&@DJ@941nd'
+                password: '123dj4*#&@DJ@941nd',
             }
             userRepositoryGetUserByEmailStub.returns(expectedResult)
 
-            const response = authService.verifyPassword(payload.email, payload.password)
+            const response = authService.verifyPassword(
+                payload.email,
+                payload.password
+            )
 
             // Question: is there a need to expect steps to hash payload's password and compare against password in db?
             expect(

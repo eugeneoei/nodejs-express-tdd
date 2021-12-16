@@ -7,6 +7,9 @@ class AuthService {
     }
 
     createUser(email, firstName, lastName, password) {
+        /**
+         * NOTE: could potentially emit a user creation success event. eg subscriber could be welcome email notification
+         */
         const user = this.userRepository.createUser(email, firstName, lastName, password)
         return user
     }

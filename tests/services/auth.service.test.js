@@ -70,9 +70,32 @@ describe('Auth Service', () => {
     })
 
     describe('verifyPassword method', () => {
+        let userRepositoryGetUserByEmailStub
+
+        beforeAll(() => {
+            userRepositoryGetUserByEmailStub = sinon.stub(
+                UserRepository.prototype,
+                'getUserByEmail'
+            )
+        })
+
+        afterEach(() => {
+            userRepositoryGetUserByEmailStub.reset()
+        })
+
         it('Should return user object if given credentials are valid', () => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                password: 'password1'
+            }
+
             const response = authService.verifyPassword()
 
+            expect(
+                userRepositoryGetUserByEmailStub.calledOnceWithExactly(
+                    payload.email
+                )
+            )
             expect(response.id).toBeDefined()
             expect(response.email).toBeDefined()
             expect(response.firstName).toBeDefined()

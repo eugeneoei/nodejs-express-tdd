@@ -22,13 +22,8 @@ class AuthService {
         /**
          * TODO: calls userRepository to retrieve user by email and verify that password is correct
          */
-        return {
-            id: '1',
-            email: 'jon.doe@email.com',
-            firstName: 'Jon',
-            lastName: 'Doe',
-            password: 'asdfhe7392hdbask@$&dha'
-        }
+        const user = this.userRepository.getUserByEmail(email)
+        return user
     }
 
     generateTokens(payload) {

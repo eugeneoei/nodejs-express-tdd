@@ -88,8 +88,16 @@ describe('Auth Service', () => {
                 email: 'jon.doe@email.com',
                 password: 'password1'
             }
+            const expectedResult = {
+                id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+                password: '123dj4*#&@DJ@941nd'
+            }
+            userRepositoryGetUserByEmailStub.returns(expectedResult)
 
-            const response = authService.verifyPassword()
+            const response = authService.verifyPassword(payload.email, payload.password)
 
             expect(
                 userRepositoryGetUserByEmailStub.calledOnceWithExactly(

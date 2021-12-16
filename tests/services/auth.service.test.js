@@ -1,7 +1,11 @@
 const sinon = require('sinon')
+const bcrypt = require('bcrypt')
 
 const AuthService = require('../../services/auth.service')
 const UserRepository = require('../../repositories/user.repository')
+
+const test = new AuthService()
+// console.log(test.hashPassword('asd'))
 
 describe('Auth Service', () => {
     let authService
@@ -11,22 +15,24 @@ describe('Auth Service', () => {
     })
 
     describe('Interface', () => {
-        it('Should contain the methods createUser and generateTokens', () => {
+        it('Should contain the methods createUser and generateTokens', (done) => {
             expect(authService.createUser).toBeDefined()
             expect(authService.generateTokens).toBeDefined()
             expect(authService.verifyPassword).toBeDefined()
+            done()
         })
     })
 
     describe('createUser method', () => {
-        let userRepositoryCreateUserStub, authServiceHashPasswordSpy
+        let userRepositoryCreateUserStub,
+            authServiceHashPasswordStub
 
-        beforeAll(() => {
+        beforeAll(async () => {
             userRepositoryCreateUserStub = sinon.stub(
                 UserRepository.prototype,
                 'createUser'
             )
-            authServiceHashPasswordSpy = sinon.spy(
+            authServiceHashPasswordStub = sinon.stub(
                 AuthService.prototype,
                 'hashPassword'
             )
@@ -34,10 +40,10 @@ describe('Auth Service', () => {
 
         afterEach(() => {
             userRepositoryCreateUserStub.reset()
-            authServiceHashPasswordSpy.reset()
+            authServiceHashPasswordStub.reset()
         })
 
-        it('Should call createUser method in userRepository and hashPassword method in authService and return new user object', () => {
+        it('Should call createUser method in userRepository and hashPassword method in authService and return new user object', (done) => {
             const payload = {
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
@@ -50,32 +56,39 @@ describe('Auth Service', () => {
                 firstName: 'Jon',
                 lastName: 'Doe',
             }
+            const expectedHashedPassword = `${payload.password}#(sdasdaqwej302rk!`
             userRepositoryCreateUserStub.returns(expectedUserResult)
+            authServiceHashPasswordStub.returns(expectedHashedPassword)
 
-            const response = authService.createUser(
+            authService.createUser(
                 payload.email,
                 payload.firstName,
                 payload.lastName,
                 payload.password
             )
+            .then(res => {
+                /**
+                 * Question: should response object properties be tested with toBeDefined or comparing whole object would be suitable?
+                 */
+                expect(
+                    userRepositoryCreateUserStub.calledOnceWithExactly(
+                        payload.email,
+                        payload.firstName,
+                        payload.lastName,
+                        expectedHashedPassword
+                    )
+                ).toBeTruthy()
+                expect(
+                    authServiceHashPasswordStub.calledOnceWithExactly(
+                        payload.password
+                    )
+                ).toBeTruthy()
+                expect(authServiceHashPasswordStub.calledBefore(userRepositoryCreateUserStub)).toBe(true)
+                expect(res).toEqual(expectedUserResult)
+                done()
+            })
+            .catch((err) => done(err))
 
-            /**
-             * Question: should response object properties to be tested with toBeDefined or comparing whole object would be suitable?
-             */
-            expect(
-                userRepositoryCreateUserStub.calledOnceWithExactly(
-                    payload.email,
-                    payload.firstName,
-                    payload.lastName,
-                    payload.password
-                )
-            ).toBeTruthy()
-            expect(
-                authServiceHashPasswordSpy.calledOnceWithExactly(
-                    payload.password
-                )
-            ).toBeTruthy()
-            expect(response).toEqual(expectedUserResult)
         })
     })
 
@@ -93,7 +106,7 @@ describe('Auth Service', () => {
             userRepositoryGetUserByEmailStub.reset()
         })
 
-        it('Should return user object if given credentials are valid', () => {
+        it('Should return user object if given credentials are valid', (done) => {
             const payload = {
                 email: 'jon.doe@email.com',
                 password: 'password1',
@@ -123,11 +136,12 @@ describe('Auth Service', () => {
             expect(response.firstName).toBeDefined()
             expect(response.lastName).toBeDefined()
             expect(response.password).toBeDefined()
+            done()
         })
     })
 
     describe('generateToken method', () => {
-        it('Should return access and refresh token when called', () => {
+        it('Should return access and refresh token when called', (done) => {
             const payload = {
                 id: '123',
             }
@@ -140,6 +154,7 @@ describe('Auth Service', () => {
             expect(response).toBeTruthy()
             expect(response.accessToken).toBeDefined()
             expect(response.refreshToken).toBeDefined()
+            done()
         })
     })
 })

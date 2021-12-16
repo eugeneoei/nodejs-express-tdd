@@ -27,6 +27,7 @@ class AuthService {
             email: 'jon.doe@email.com',
             firstName: 'Jon',
             lastName: 'Doe',
+            password: 'asdfhe7392hdbask@$&dha'
         }
     }
 

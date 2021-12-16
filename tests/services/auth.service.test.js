@@ -10,9 +10,12 @@ describe('Auth Service', () => {
         authService = new AuthService()
     })
 
-    it('Should contain the methods createUser and generateTokens', () => {
-        expect(authService.createUser).toBeDefined()
-        expect(authService.generateTokens).toBeDefined()
+    describe('Interface', () => {
+        it('Should contain the methods createUser and generateTokens', () => {
+            expect(authService.createUser).toBeDefined()
+            expect(authService.generateTokens).toBeDefined()
+            expect(authService.verifyPassword).toBeDefined()
+        })
     })
 
     describe('createUser method', () => {
@@ -66,11 +69,17 @@ describe('Auth Service', () => {
         })
     })
 
-    describe('generateToken method', () => {
+    describe('verifyPassword method', () => {
+        it('Should return user object if given credentials are valid', () => {
+            const response = authService.verifyPassword()
+            expect(response).toBeTruthy()
+        })
+    })
 
+    describe('generateToken method', () => {
         it('Should return access and refresh token when called', () => {
             const payload = {
-                id: '123'
+                id: '123',
             }
 
             const response = authService.generateTokens(payload)

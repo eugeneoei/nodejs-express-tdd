@@ -72,7 +72,12 @@ describe('Auth Service', () => {
     describe('verifyPassword method', () => {
         it('Should return user object if given credentials are valid', () => {
             const response = authService.verifyPassword()
-            expect(response).toBeTruthy()
+
+            expect(response.id).toBeDefined()
+            expect(response.email).toBeDefined()
+            expect(response.firstName).toBeDefined()
+            expect(response.lastName).toBeDefined()
+            expect(response.password).toBeDefined()
         })
     })
 

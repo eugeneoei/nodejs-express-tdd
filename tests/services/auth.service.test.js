@@ -95,7 +95,7 @@ describe('Auth Service', () => {
                 userRepositoryGetUserByEmailStub.calledOnceWithExactly(
                     payload.email
                 )
-            )
+            ).toBeTruthy()
             expect(response.id).toBeDefined()
             expect(response.email).toBeDefined()
             expect(response.firstName).toBeDefined()

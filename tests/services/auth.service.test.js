@@ -24,8 +24,7 @@ describe('Auth Service', () => {
     })
 
     describe('createUser method', () => {
-        let userRepositoryCreateUserStub,
-            authServiceHashPasswordStub
+        let userRepositoryCreateUserStub, authServiceHashPasswordStub
 
         beforeAll(async () => {
             userRepositoryCreateUserStub = sinon.stub(
@@ -60,35 +59,39 @@ describe('Auth Service', () => {
             userRepositoryCreateUserStub.returns(expectedUserResult)
             authServiceHashPasswordStub.returns(expectedHashedPassword)
 
-            authService.createUser(
-                payload.email,
-                payload.firstName,
-                payload.lastName,
-                payload.password
-            )
-            .then(res => {
-                /**
-                 * Question: should response object properties be tested with toBeDefined or comparing whole object would be suitable?
-                 */
-                expect(
-                    userRepositoryCreateUserStub.calledOnceWithExactly(
-                        payload.email,
-                        payload.firstName,
-                        payload.lastName,
-                        expectedHashedPassword
-                    )
-                ).toBeTruthy()
-                expect(
-                    authServiceHashPasswordStub.calledOnceWithExactly(
-                        payload.password
-                    )
-                ).toBeTruthy()
-                expect(authServiceHashPasswordStub.calledBefore(userRepositoryCreateUserStub)).toBe(true)
-                expect(res).toEqual(expectedUserResult)
-                done()
-            })
-            .catch((err) => done(err))
-
+            authService
+                .createUser(
+                    payload.email,
+                    payload.firstName,
+                    payload.lastName,
+                    payload.password
+                )
+                .then((res) => {
+                    /**
+                     * Question: should response object properties be tested with toBeDefined or comparing whole object would be suitable?
+                     */
+                    expect(
+                        userRepositoryCreateUserStub.calledOnceWithExactly(
+                            payload.email,
+                            payload.firstName,
+                            payload.lastName,
+                            expectedHashedPassword
+                        )
+                    ).toBeTruthy()
+                    expect(
+                        authServiceHashPasswordStub.calledOnceWithExactly(
+                            payload.password
+                        )
+                    ).toBeTruthy()
+                    expect(
+                        authServiceHashPasswordStub.calledBefore(
+                            userRepositoryCreateUserStub
+                        )
+                    ).toBe(true)
+                    expect(res).toEqual(expectedUserResult)
+                    done()
+                })
+                .catch((err) => done(err))
         })
     })
 

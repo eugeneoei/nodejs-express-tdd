@@ -41,4 +41,6 @@ describe('User Model', () => {
             done()
         })
     })
+
+    // Question: a test case that covers unique email field should be added. but where should this test be?
 })

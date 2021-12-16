@@ -28,4 +28,17 @@ describe('User Model', () => {
             done()
         })
     })
+
+    it('Should not return email error if given email is a valid email', (done) => {
+        const payload = {
+            email: 'jon.doe@email.com'
+        }
+
+        const newUser = new UserModel(payload)
+
+        newUser.validate((err) => {
+            expect(err.errors.email).not.toBeDefined()
+            done()
+        })
+    })
 })

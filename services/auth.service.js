@@ -20,7 +20,7 @@ class AuthService {
      */
     verifyPassword(email, password) {
         /**
-         * TODO: calls userRepository to retrieve user by email and verify that password is correct
+         * TODO: hash given password and check that it matches hashed password in db
          */
         const user = this.userRepository.getUserByEmail(email)
         return user

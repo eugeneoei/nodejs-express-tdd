@@ -99,6 +99,7 @@ describe('Auth Service', () => {
 
             const response = authService.verifyPassword(payload.email, payload.password)
 
+            // Question: is there a need to expect steps to hash payload's password and compare against password in db?
             expect(
                 userRepositoryGetUserByEmailStub.calledOnceWithExactly(
                     payload.email

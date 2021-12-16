@@ -12,4 +12,20 @@ describe('User Model', () => {
             done()
         })
     })
+
+    it('Should return email error if given email is not a valid email', (done) => {
+        const payload = {
+            email: 'jon.doe.com',
+            firstName: 'Jon',
+            lastName: 'Doe',
+            password: 'password1',
+        }
+
+        const newUser = new UserModel(payload)
+
+        newUser.validate((err) => {
+            expect(err.errors.email).toBeDefined()
+            done()
+        })
+    })
 })

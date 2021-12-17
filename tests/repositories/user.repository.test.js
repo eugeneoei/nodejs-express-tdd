@@ -19,9 +19,15 @@ describe('User Repository', () => {
     describe('createUser method', () => {
 
         it('Should return new user object when called with email, firstName, lastName and password', () => {
+            const expectedResult = {
+                id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe'
+            }
             const response = userRepository.createUser()
 
-            expect(response).toBe(1)
+            expect(response).toEqual(expectedResult)
         });
     });
 })

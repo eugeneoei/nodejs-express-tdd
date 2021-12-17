@@ -21,6 +21,7 @@ describe('User Repository', () => {
         let userModelSaveStub
 
         beforeAll(() => {
+            console.log(User.prototype.save)
             userModelSaveStub = sinon.stub(User.prototype, 'save')
         })
 
@@ -56,10 +57,29 @@ describe('User Repository', () => {
     })
 
     describe('getUserByEmail method', () => {
+        let userModelFindOneStub
+
+        beforeAll(() => {
+            userModelFindOneStub = sinon.stub(User, 'findOne')
+        })
+
+        afterEach(() => {
+            userModelFindOneStub.reset()
+        })
+
         it('Should return user that matches given email string', () => {
             const payload = 'jon.doe@email.com'
+            const expectedResult = {
+                _id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+            }
+            userModelFindOneStub.returns(expectedResult)
+
             const response = userRepository.getUserByEmail(payload)
-            expect(response).toBe(1)
+
+            expect(response).toBe(expectedResult)
         })
     })
 })

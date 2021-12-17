@@ -168,5 +168,14 @@ describe('Auth Service', () => {
             expect(response).not.toBe(payload)
         })
 
+        it('Should throw an error if given password is not a string', () => {
+            const payload = 123456
+
+            expect(() => {
+                authService.hashPassword(payload)
+            }).toThrow()
+
+        })
+
     })
 })

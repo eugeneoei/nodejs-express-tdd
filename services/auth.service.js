@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 const UserRepository = require('../repositories/user.repository')
 
 class AuthService {
@@ -6,23 +8,22 @@ class AuthService {
         this.userRepository = new UserRepository()
     }
 
-    async createUser(email, firstName, lastName, password) {
+    createUser(email, firstName, lastName, password) {
         /**
          * NOTE: could potentially emit a user creation success event. eg subscriber could be welcome email notification
          */
-        const hashedPassword = await this.hashPassword(password)
+        const hashedPassword = this.hashPassword(password)
         const user = this.userRepository.createUser(email, firstName, lastName, hashedPassword)
         return user
     }
 
     hashPassword(password) {
+        if (typeof password !== 'string') {
+            throw new Error('Password must be of string type')
+        }
         return bcrypt.hash(password, process.env.SALT_ROUNDS, (err, hash) => hash)
     }
 
-    /**
-     *
-     * @returns user object
-     */
     verifyPassword(email, password) {
         /**
          * TODO: hash given password and check that it matches hashed password in db

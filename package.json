@@ -26,9 +26,5 @@
     "mongoose": "^6.1.2",
     "validator": "^13.7.0"
   },
-  "jest": {
-    "setupFiles": [
-      "<rootDir>/jest/.env.jest.js"
-    ]
-  }
+  "jest": {}
 }

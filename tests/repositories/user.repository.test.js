@@ -47,11 +47,19 @@ describe('User Repository', () => {
                 payload.email,
                 payload.firstName,
                 payload.lastName,
-                payload.password,
+                payload.password
             )
 
             expect(response).toEqual(expectedResult)
             expect(userModelSaveStub.calledOnce).toBe(true)
+        })
+    })
+
+    describe('getUserByEmail method', () => {
+        it('Should return user that matches given email string', () => {
+            const payload = 'jon.doe@email.com'
+            const response = userRepository.getUserByEmail(payload)
+            expect(response).toBe(1)
         })
     })
 })

@@ -4,9 +4,6 @@ const bcrypt = require('bcrypt')
 const AuthService = require('../../services/auth.service')
 const UserRepository = require('../../repositories/user.repository')
 
-const test = new AuthService()
-// console.log(test.hashPassword('asd'))
-
 describe('Auth Service', () => {
     let authService
 
@@ -15,11 +12,10 @@ describe('Auth Service', () => {
     })
 
     describe('Interface', () => {
-        it('Should contain the methods createUser and generateTokens', (done) => {
+        it('Should contain the methods createUser and generateTokens', () => {
             expect(authService.createUser).toBeDefined()
             expect(authService.generateTokens).toBeDefined()
             expect(authService.verifyPassword).toBeDefined()
-            done()
         })
     })
 
@@ -42,7 +38,7 @@ describe('Auth Service', () => {
             authServiceHashPasswordStub.reset()
         })
 
-        it('Should call createUser method in userRepository and hashPassword method in authService and return new user object', (done) => {
+        it('Should call createUser method in userRepository and hashPassword method in authService and return new user object', () => {
             const payload = {
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
@@ -59,39 +55,34 @@ describe('Auth Service', () => {
             userRepositoryCreateUserStub.returns(expectedUserResult)
             authServiceHashPasswordStub.returns(expectedHashedPassword)
 
-            authService
-                .createUser(
+            const res = authService.createUser(
+                payload.email,
+                payload.firstName,
+                payload.lastName,
+                payload.password
+            )
+            /**
+             * Question: should response object properties be tested with toBeDefined or comparing whole object would be suitable?
+             */
+            expect(
+                userRepositoryCreateUserStub.calledOnceWithExactly(
                     payload.email,
                     payload.firstName,
                     payload.lastName,
+                    expectedHashedPassword
+                )
+            ).toBeTruthy()
+            expect(
+                authServiceHashPasswordStub.calledOnceWithExactly(
                     payload.password
                 )
-                .then((res) => {
-                    /**
-                     * Question: should response object properties be tested with toBeDefined or comparing whole object would be suitable?
-                     */
-                    expect(
-                        userRepositoryCreateUserStub.calledOnceWithExactly(
-                            payload.email,
-                            payload.firstName,
-                            payload.lastName,
-                            expectedHashedPassword
-                        )
-                    ).toBeTruthy()
-                    expect(
-                        authServiceHashPasswordStub.calledOnceWithExactly(
-                            payload.password
-                        )
-                    ).toBeTruthy()
-                    expect(
-                        authServiceHashPasswordStub.calledBefore(
-                            userRepositoryCreateUserStub
-                        )
-                    ).toBe(true)
-                    expect(res).toEqual(expectedUserResult)
-                    done()
-                })
-                .catch((err) => done(err))
+            ).toBeTruthy()
+            expect(
+                authServiceHashPasswordStub.calledBefore(
+                    userRepositoryCreateUserStub
+                )
+            ).toBe(true)
+            expect(res).toEqual(expectedUserResult)
         })
     })
 
@@ -109,7 +100,7 @@ describe('Auth Service', () => {
             userRepositoryGetUserByEmailStub.reset()
         })
 
-        it('Should return user object if given credentials are valid', (done) => {
+        it('Should return user object if given credentials are valid', () => {
             const payload = {
                 email: 'jon.doe@email.com',
                 password: 'password1',
@@ -139,12 +130,11 @@ describe('Auth Service', () => {
             expect(response.firstName).toBeDefined()
             expect(response.lastName).toBeDefined()
             expect(response.password).toBeDefined()
-            done()
         })
     })
 
     describe('generateToken method', () => {
-        it('Should return access and refresh token when called', (done) => {
+        it('Should return access and refresh token when called', () => {
             const payload = {
                 id: '123',
             }
@@ -157,7 +147,26 @@ describe('Auth Service', () => {
             expect(response).toBeTruthy()
             expect(response.accessToken).toBeDefined()
             expect(response.refreshToken).toBeDefined()
-            done()
         })
+    })
+
+    describe('hashPassword method', () => {
+        let bcryptHashStub
+
+        beforeAll(() => {
+            sinon.restore()
+            bcryptHashStub = sinon.stub(bcrypt, 'hash')
+        })
+
+        it('Should return hashed password given a string', () => {
+            const payload = 'password123'
+            const expectedResult = `${payload}^&*(UHsdf)123`
+            bcryptHashStub.returns(expectedResult)
+
+            const response = authService.hashPassword(payload)
+            expect(response).toBe(expectedResult)
+            expect(response).not.toBe(payload)
+        })
+
     })
 })

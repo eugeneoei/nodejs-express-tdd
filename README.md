@@ -4,11 +4,11 @@ A TDD exercise on NodeJS with Express and MongoDB(?).
 
 Folder structure is as follows:
 
-- Controllers: responsible for accepting requests, calls respective service and provide a response
-- Middlewares: executes checks and validation such as authentication, authorisation, valid input values
-- Services: calls one or multiple repositories and emits events
-- Repositories: calls one object entity (model) only
-- Models: database schema
+- `controllers`: responsible for accepting requests, calls respective service and provide a response
+- `middlewares`: executes checks and validation such as authentication, authorisation, valid input values
+- `services`: calls one or multiple repositories and emits events
+- `repositories`: calls one object entity (model) only
+- `models`: database schema
 
 # Objectives
 

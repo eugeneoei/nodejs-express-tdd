@@ -1,0 +1,2 @@
+process.env.SECRET_KEY = 'ea0803c364284eb83e571029e3d8f03325995d7c4ef75f69e15b0cdaf0c1d07d'
+process.env.SALT_ROUNDS = 10

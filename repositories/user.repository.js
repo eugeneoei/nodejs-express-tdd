@@ -1,9 +1,9 @@
-const UserModel = require('../models/user.model')
+const User = require('../models/user.model')
 
 class UserRepository {
 
-    createUser(email, firstName, lastName, password) {
-        const newUser = new UserModel({
+    async createUser(email, firstName, lastName, password) {
+        const newUser = await new User({
             email,
             firstName,
             lastName,
@@ -12,8 +12,12 @@ class UserRepository {
         return newUser.save()
     }
 
-    getUserByEmail(email) {
-        return 1
+    async getUserByEmail(email) {
+        const user = await User.findOne({ email })
+        if (user) {
+            return user
+        }
+        return null
     }
 }
 

@@ -21,7 +21,6 @@ describe('User Repository', () => {
         let userModelSaveStub
 
         beforeAll(() => {
-            console.log(User.prototype.save)
             userModelSaveStub = sinon.stub(User.prototype, 'save')
         })
 
@@ -29,7 +28,7 @@ describe('User Repository', () => {
             userModelSaveStub.reset()
         })
 
-        it('Should return new user object when called with email, firstName, lastName and password', () => {
+        it('Should return new user object when called with email, firstName, lastName and password', async () => {
             const payload = {
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
@@ -44,7 +43,7 @@ describe('User Repository', () => {
             }
             userModelSaveStub.returns(expectedResult)
 
-            const response = userRepository.createUser(
+            const response = await userRepository.createUser(
                 payload.email,
                 payload.firstName,
                 payload.lastName,
@@ -67,7 +66,7 @@ describe('User Repository', () => {
             userModelFindOneStub.reset()
         })
 
-        it('Should return user that matches given email string', () => {
+        it('Should return user that matches given email string', async () => {
             const payload = 'jon.doe@email.com'
             const expectedResult = {
                 _id: '1',
@@ -77,7 +76,18 @@ describe('User Repository', () => {
             }
             userModelFindOneStub.returns(expectedResult)
 
-            const response = userRepository.getUserByEmail(payload)
+            const response = await userRepository.getUserByEmail(payload)
+
+            expect(userModelFindOneStub.calledOnce).toBe(true)
+            expect(response).toBe(expectedResult)
+        })
+
+        it('Should return null if user is not found based on given email string', async () => {
+            const payload = 'hulk@email.com'
+            const expectedResult = null
+            userModelFindOneStub.returns(expectedResult)
+
+            const response = await userRepository.getUserByEmail(payload)
 
             expect(response).toBe(expectedResult)
         })

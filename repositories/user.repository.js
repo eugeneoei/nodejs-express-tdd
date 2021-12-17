@@ -1,16 +1,17 @@
+const UserModel = require('../models/user.model')
+
 class UserRepository {
 
-    // TODO: use model and create
     createUser(email, firstName, lastName, password) {
-        return {
-            id: '1',
-            email: 'jon.doe@email.com',
-            firstName: 'Jon',
-            lastName: 'Doe'
-        }
+        const newUser = new UserModel({
+            email,
+            firstName,
+            lastName,
+            password
+        })
+        return newUser.save()
     }
 
-    // TODO: use model and get
     getUserByEmail(email) {
         return 1
     }

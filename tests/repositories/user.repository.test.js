@@ -18,12 +18,10 @@ describe('User Repository', () => {
     })
 
     describe('createUser method', () => {
-        let userModelSpy
         let userModelSaveStub
 
         beforeAll(() => {
             userModelSaveStub = sinon.stub(User.prototype, 'save')
-            userModelSpy = sinon.spy(User)
         })
 
         afterEach(() => {

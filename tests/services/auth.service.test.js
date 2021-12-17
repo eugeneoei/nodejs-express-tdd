@@ -12,10 +12,11 @@ describe('Auth Service', () => {
     })
 
     describe('Interface', () => {
-        it('Should contain the methods createUser and generateTokens', () => {
+        it('Should contain the methods createUser, hashPassword, verifyPassword and generateTokens', () => {
             expect(authService.createUser).toBeDefined()
             expect(authService.generateTokens).toBeDefined()
             expect(authService.verifyPassword).toBeDefined()
+            expect(authService.hashPassword).toBeDefined()
         })
     })
 

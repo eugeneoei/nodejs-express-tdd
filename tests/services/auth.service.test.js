@@ -154,6 +154,7 @@ describe('Auth Service', () => {
         let bcryptHashStub
 
         beforeAll(() => {
+            // Question: why is there a need to restore sinon object? Why does restoring stub fail?
             sinon.restore()
             bcryptHashStub = sinon.stub(bcrypt, 'hash')
         })

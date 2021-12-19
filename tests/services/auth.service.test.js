@@ -86,22 +86,21 @@ describe('Auth Service', () => {
         })
     })
 
-    // describe('generateToken method', () => {
-    //     it('Should return access and refresh token when called', () => {
-    //         const payload = {
-    //             id: '123',
-    //         }
+    describe('generateToken method', () => {
+        it('Should return access and refresh token', () => {
+            const payload = {
+                id: '123',
+            }
+            const expectedTokens = {
+                accessToken: 'qwe123',
+                refreshToken: 'asd123',
+            }
 
-    //         const response = authService.generateTokens(payload)
+            const response = authService.generateTokens(payload)
 
-    //         /**
-    //          * Question: since response will always be a different value, does that mean unit test should simply assert that accessToken and refreshToken properties exist?
-    //          */
-    //         expect(response).toBeTruthy()
-    //         expect(response.accessToken).toBeDefined()
-    //         expect(response.refreshToken).toBeDefined()
-    //     })
-    // })
+            expect(response).toEqual(expectedTokens)
+        })
+    })
 
     // describe('hashPassword method', () => {
     //     let bcryptHashStub

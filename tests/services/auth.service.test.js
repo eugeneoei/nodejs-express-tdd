@@ -1,6 +1,3 @@
-// const sinon = require('sinon')
-// const bcrypt = require('bcrypt')
-
 const mockUserRespositoryCreateUser = jest.fn()
 const mockGetUserByEmail = jest.fn()
 const mockUserRespository = jest.fn().mockImplementation(() => ({
@@ -15,7 +12,6 @@ jest.mock('bcrypt', () => ({
 }))
 
 const AuthService = require('../../services/auth.service')
-// const UserRepository = require('../../repositories/user.repository')
 
 describe('Auth Service', () => {
     let authService

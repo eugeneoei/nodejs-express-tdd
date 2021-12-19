@@ -1,8 +1,15 @@
-const sinon = require('sinon')
-const bcrypt = require('bcrypt')
+// const sinon = require('sinon')
+// const bcrypt = require('bcrypt')
+
+const mockUserRespositoryCreateUser = jest.fn()
+// const mockHashPassword = jest.fn()
+const mockUserRespository = jest.fn().mockImplementation(() => ({
+    createUser: mockUserRespositoryCreateUser,
+}))
+jest.mock('../../repositories/user.repository', () => mockUserRespository)
 
 const AuthService = require('../../services/auth.service')
-const UserRepository = require('../../repositories/user.repository')
+// const UserRepository = require('../../repositories/user.repository')
 
 describe('Auth Service', () => {
     let authService
@@ -12,153 +19,130 @@ describe('Auth Service', () => {
     })
 
     describe('createUser method', () => {
-        let userRepositoryCreateUserStub, authServiceHashPasswordStub
-
-        beforeAll(async () => {
-            userRepositoryCreateUserStub = sinon.stub(
-                UserRepository.prototype,
-                'createUser'
-            )
-            authServiceHashPasswordStub = sinon.stub(
-                AuthService.prototype,
-                'hashPassword'
-            )
-        })
-
-        afterEach(() => {
-            userRepositoryCreateUserStub.reset()
-            authServiceHashPasswordStub.reset()
-        })
-
-        it('Should call createUser method in userRepository and hashPassword method in authService and return new user object', () => {
+        it('Should return new user object', () => {
             const payload = {
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
                 password: 'password1',
             }
-            const expectedUserResult = {
+            const expectedUser = {
                 id: '1',
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
             }
-            const expectedHashedPassword = `${payload.password}#(sdasdaqwej302rk!`
-            userRepositoryCreateUserStub.returns(expectedUserResult)
-            authServiceHashPasswordStub.returns(expectedHashedPassword)
+            const expectedHashedPassword = '#(sdasdaqwej302rk!'
+            mockUserRespositoryCreateUser.mockImplementationOnce(
+                () => expectedUser
+            )
+            /**
+             * Question: is this the right way to mock this.hashPassword?
+             */
+            const spyHashPassword = jest
+                .spyOn(AuthService.prototype, 'hashPassword')
+                .mockImplementationOnce(() => expectedHashedPassword)
 
-            const res = authService.createUser(
+            const user = authService.createUser(
                 payload.email,
                 payload.firstName,
                 payload.lastName,
                 payload.password
             )
-            /**
-             * Question: should response object properties be tested with toBeDefined or comparing whole object would be suitable?
-             */
-            expect(
-                userRepositoryCreateUserStub.calledOnceWithExactly(
-                    payload.email,
-                    payload.firstName,
-                    payload.lastName,
-                    expectedHashedPassword
-                )
-            ).toBeTruthy()
-            expect(
-                authServiceHashPasswordStub.calledOnceWithExactly(
-                    payload.password
-                )
-            ).toBeTruthy()
-            expect(
-                authServiceHashPasswordStub.calledBefore(
-                    userRepositoryCreateUserStub
-                )
-            ).toBe(true)
-            expect(res).toEqual(expectedUserResult)
-        })
-    })
 
-    describe('verifyPassword method', () => {
-        let userRepositoryGetUserByEmailStub
-
-        beforeAll(() => {
-            userRepositoryGetUserByEmailStub = sinon.stub(
-                UserRepository.prototype,
-                'getUserByEmail'
-            )
-        })
-
-        afterEach(() => {
-            userRepositoryGetUserByEmailStub.reset()
-        })
-
-        it('Should return user object if given credentials are valid', () => {
-            const payload = {
-                email: 'jon.doe@email.com',
-                password: 'password1',
-            }
-            const stubUser = {
-                id: '1',
-                email: 'jon.doe@email.com',
-                firstName: 'Jon',
-                lastName: 'Doe',
-                password: '123dj4*#&@DJ@941nd',
-            }
-            userRepositoryGetUserByEmailStub.returns(stubUser)
-
-            const user = authService.verifyPassword(
+            expect(user).toEqual(expectedUser)
+            expect(mockUserRespositoryCreateUser).toHaveBeenCalled()
+            expect(mockUserRespositoryCreateUser).toHaveBeenCalledWith(
                 payload.email,
-                payload.password
+                payload.firstName,
+                payload.lastName,
+                expectedHashedPassword
             )
-
-            expect(user).toEqual(stubUser)
+            expect(spyHashPassword).toHaveBeenCalled()
         })
     })
 
-    describe('generateToken method', () => {
-        it('Should return access and refresh token when called', () => {
-            const payload = {
-                id: '123',
-            }
+    // describe('verifyPassword method', () => {
+    //     let userRepositoryGetUserByEmailStub
 
-            const response = authService.generateTokens(payload)
+    //     beforeAll(() => {
+    //         userRepositoryGetUserByEmailStub = sinon.stub(
+    //             UserRepository.prototype,
+    //             'getUserByEmail'
+    //         )
+    //     })
 
-            /**
-             * Question: since response will always be a different value, does that mean unit test should simply assert that accessToken and refreshToken properties exist?
-             */
-            expect(response).toBeTruthy()
-            expect(response.accessToken).toBeDefined()
-            expect(response.refreshToken).toBeDefined()
-        })
-    })
+    //     afterEach(() => {
+    //         userRepositoryGetUserByEmailStub.reset()
+    //     })
 
-    describe('hashPassword method', () => {
-        let bcryptHashStub
+    //     it('Should return user object if given credentials are valid', () => {
+    //         const payload = {
+    //             email: 'jon.doe@email.com',
+    //             password: 'password1',
+    //         }
+    //         const stubUser = {
+    //             id: '1',
+    //             email: 'jon.doe@email.com',
+    //             firstName: 'Jon',
+    //             lastName: 'Doe',
+    //             password: '123dj4*#&@DJ@941nd',
+    //         }
+    //         userRepositoryGetUserByEmailStub.returns(stubUser)
 
-        beforeAll(() => {
-            // Question: why is there a need to restore sinon object? Why does restoring stub fail?
-            sinon.restore()
-            bcryptHashStub = sinon.stub(bcrypt, 'hash')
-        })
+    //         const user = authService.verifyPassword(
+    //             payload.email,
+    //             payload.password
+    //         )
 
-        it('Should return hashed password given a string', () => {
-            const payload = 'password123'
-            const expectedResult = `${payload}^&*(UHsdf)123`
-            bcryptHashStub.returns(expectedResult)
+    //         expect(user).toEqual(stubUser)
+    //     })
+    // })
 
-            const response = authService.hashPassword(payload)
-            expect(response).toBe(expectedResult)
-            expect(response).not.toBe(payload)
-        })
+    // describe('generateToken method', () => {
+    //     it('Should return access and refresh token when called', () => {
+    //         const payload = {
+    //             id: '123',
+    //         }
 
-        it('Should throw an error if given password is not a string', () => {
-            const payload = 123456
+    //         const response = authService.generateTokens(payload)
 
-            expect(() => {
-                authService.hashPassword(payload)
-            }).toThrow()
+    //         /**
+    //          * Question: since response will always be a different value, does that mean unit test should simply assert that accessToken and refreshToken properties exist?
+    //          */
+    //         expect(response).toBeTruthy()
+    //         expect(response.accessToken).toBeDefined()
+    //         expect(response.refreshToken).toBeDefined()
+    //     })
+    // })
 
-        })
+    // describe('hashPassword method', () => {
+    //     let bcryptHashStub
 
-    })
+    //     beforeAll(() => {
+    //         // Question: why is there a need to restore sinon object? Why does restoring stub fail?
+    //         sinon.restore()
+    //         bcryptHashStub = sinon.stub(bcrypt, 'hash')
+    //     })
+
+    //     it('Should return hashed password given a string', () => {
+    //         const payload = 'password123'
+    //         const expectedResult = `${payload}^&*(UHsdf)123`
+    //         bcryptHashStub.returns(expectedResult)
+
+    //         const response = authService.hashPassword(payload)
+    //         expect(response).toBe(expectedResult)
+    //         expect(response).not.toBe(payload)
+    //     })
+
+    //     it('Should throw an error if given password is not a string', () => {
+    //         const payload = 123456
+
+    //         expect(() => {
+    //             authService.hashPassword(payload)
+    //         }).toThrow()
+
+    //     })
+
+    // })
 })

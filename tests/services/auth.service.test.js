@@ -2,9 +2,10 @@
 // const bcrypt = require('bcrypt')
 
 const mockUserRespositoryCreateUser = jest.fn()
-// const mockHashPassword = jest.fn()
+const mockGetUserByEmail = jest.fn()
 const mockUserRespository = jest.fn().mockImplementation(() => ({
     createUser: mockUserRespositoryCreateUser,
+    getUserByEmail: mockGetUserByEmail,
 }))
 jest.mock('../../repositories/user.repository', () => mockUserRespository)
 
@@ -62,42 +63,28 @@ describe('Auth Service', () => {
         })
     })
 
-    // describe('verifyPassword method', () => {
-    //     let userRepositoryGetUserByEmailStub
+    describe('verifyPassword method', () => {
+        it('Should return user object if given credentials are valid', async () => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                password: 'password1',
+            }
+            const expectedUser = {
+                _id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+            }
+            mockGetUserByEmail.mockImplementationOnce(() => expectedUser)
 
-    //     beforeAll(() => {
-    //         userRepositoryGetUserByEmailStub = sinon.stub(
-    //             UserRepository.prototype,
-    //             'getUserByEmail'
-    //         )
-    //     })
+            const user = await authService.verifyPassword(
+                payload.email,
+                payload.password
+            )
 
-    //     afterEach(() => {
-    //         userRepositoryGetUserByEmailStub.reset()
-    //     })
-
-    //     it('Should return user object if given credentials are valid', () => {
-    //         const payload = {
-    //             email: 'jon.doe@email.com',
-    //             password: 'password1',
-    //         }
-    //         const stubUser = {
-    //             id: '1',
-    //             email: 'jon.doe@email.com',
-    //             firstName: 'Jon',
-    //             lastName: 'Doe',
-    //             password: '123dj4*#&@DJ@941nd',
-    //         }
-    //         userRepositoryGetUserByEmailStub.returns(stubUser)
-
-    //         const user = authService.verifyPassword(
-    //             payload.email,
-    //             payload.password
-    //         )
-
-    //         expect(user).toEqual(stubUser)
-    //     })
-    // })
+            expect(user).toEqual(expectedUser)
+        })
+    })
 
     // describe('generateToken method', () => {
     //     it('Should return access and refresh token when called', () => {

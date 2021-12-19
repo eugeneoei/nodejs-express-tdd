@@ -11,15 +11,6 @@ describe('Auth Service', () => {
         authService = new AuthService()
     })
 
-    describe('Interface', () => {
-        it('Should contain the methods createUser, hashPassword, verifyPassword and generateTokens', () => {
-            expect(authService.createUser).toBeDefined()
-            expect(authService.generateTokens).toBeDefined()
-            expect(authService.verifyPassword).toBeDefined()
-            expect(authService.hashPassword).toBeDefined()
-        })
-    })
-
     describe('createUser method', () => {
         let userRepositoryCreateUserStub, authServiceHashPasswordStub
 
@@ -106,31 +97,21 @@ describe('Auth Service', () => {
                 email: 'jon.doe@email.com',
                 password: 'password1',
             }
-            const expectedResult = {
+            const stubUser = {
                 id: '1',
                 email: 'jon.doe@email.com',
                 firstName: 'Jon',
                 lastName: 'Doe',
                 password: '123dj4*#&@DJ@941nd',
             }
-            userRepositoryGetUserByEmailStub.returns(expectedResult)
+            userRepositoryGetUserByEmailStub.returns(stubUser)
 
-            const response = authService.verifyPassword(
+            const user = authService.verifyPassword(
                 payload.email,
                 payload.password
             )
 
-            // Question: is there a need to expect steps to hash payload's password and compare against password in db?
-            expect(
-                userRepositoryGetUserByEmailStub.calledOnceWithExactly(
-                    payload.email
-                )
-            ).toBeTruthy()
-            expect(response.id).toBeDefined()
-            expect(response.email).toBeDefined()
-            expect(response.firstName).toBeDefined()
-            expect(response.lastName).toBeDefined()
-            expect(response.password).toBeDefined()
+            expect(user).toEqual(stubUser)
         })
     })
 

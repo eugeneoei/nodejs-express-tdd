@@ -1,6 +1,8 @@
 const mockGetAllUsers = jest.fn()
+const mockGetUserById = jest.fn()
 const mockUserService = jest.fn().mockImplementation(() => ({
     getAllUsers: mockGetAllUsers,
+    getUserById: mockGetUserById,
 }))
 jest.mock('../../services/user.service', () => mockUserService)
 
@@ -17,7 +19,7 @@ describe('Users Controller', () => {
     })
 
     describe('GET /users', () => {
-        it('Should return all users and respond with status code 200', async () => {
+        it('Should return users and respond with status code 200', async () => {
             const expectedUsers = [
                 {
                     id: '1',
@@ -47,7 +49,7 @@ describe('Users Controller', () => {
             expect(mockGetAllUsers).toHaveBeenCalled()
         })
 
-        it('Should fail to return all users and respond with status code 400', async () => {
+        it('Should fail to return users and respond with status code 400', async () => {
             const expectedError = {
                 error: 'Something went wrong!',
             }
@@ -62,79 +64,54 @@ describe('Users Controller', () => {
         })
     })
 
-    // describe('GET /users/:userId', () => {
-    //     let getUserByIdStub
+    describe('GET /users/:userId', () => {
+        it('Should return user object that matches given id in url params and respond with status code 200', async () => {
+            const expectedUser = {
+                id: '2',
+                email: 'mary.jane@email.com',
+                firstName: 'Mary',
+                lastName: 'Jane',
+            }
+            const userIdToGet = '2'
+            mockGetUserById.mockImplementationOnce(() => expectedUser)
 
-    //     beforeAll(() => {
-    //         getUserByIdStub = sinon.stub(UserService.prototype, 'getUserById')
-    //     })
+            const response = await request.get(`/users/${userIdToGet}`)
 
-    //     afterEach(() => {
-    //         getUserByIdStub.reset()
-    //     })
+            expect(response.status).toBe(200)
+            expect(response.body).toEqual(expectedUser)
+            expect(mockGetUserById).toHaveBeenCalled()
+        })
 
-    //     it('Should return a user object that matches given id in url params and respond with status code 200', (done) => {
-    //         const expectedResult = {
-    //             id: '2',
-    //             email: 'mary.jane@email.com',
-    //             firstName: 'Mary',
-    //             lastName: 'Jane',
-    //         }
-    //         const userIdToGet = '2'
-    //         getUserByIdStub.returns(expectedResult)
+        it('Should return status code 404 if user is not found based on given userId in url params', async () => {
+            const userIdToGet = '2'
+            const expectedError = {
+                error: 'User not found.',
+            }
+            mockGetUserById.mockImplementationOnce(() => null)
 
-    //         request
-    //             .get(`/users/${userIdToGet}`)
-    //             .then((res) => {
-    //                 const user = res.body
-    //                 expect(res.status).toBe(200)
-    //                 expect(getUserByIdStub.calledOnce).toBeTruthy()
-    //                 expect(user).toEqual(expectedResult)
-    //                 expect(user.id).toBe(userIdToGet)
-    //                 expect(user.email).toBeDefined()
-    //                 expect(user.firstName).toBeDefined()
-    //                 expect(user.lastName).toBeDefined()
-    //                 done()
-    //             })
-    //             .catch((err) => done(err))
-    //     })
+            const response = await request.get(`/users/${userIdToGet}`)
 
-    //     it('Should return status code 404 if user is not found based on given userId in url params', (done) => {
-    //         const userIdToGet = '2'
-    //         const expectedResult = {
-    //             error: 'User not found.',
-    //         }
-    //         getUserByIdStub.returns(null)
+            expect(response.status).toBe(404)
+            expect(response.body).toEqual(expectedError)
+            expect(mockGetUserById).toHaveBeenCalled()
+        })
 
-    //         request
-    //             .get(`/users/${userIdToGet}`)
-    //             .then((res) => {
-    //                 expect(res.status).toBe(404)
-    //                 expect(getUserByIdStub.calledOnce).toBeTruthy()
-    //                 expect(res.body).toEqual(expectedResult)
-    //                 done()
-    //             })
-    //             .catch((err) => done(err))
-    //     })
+        it('Should fail to return user object and respond with status code 400', async () => {
+            const userIdToGet = '2'
+            const expectedError = {
+                error: 'Something went wrong!',
+            }
+            mockGetUserById.mockImplementationOnce(() => {
+                throw new Error('Something went wrong!')
+            })
 
-    //     it('Should fail to return user object and respond with status code 404', (done) => {
-    //         const userIdToGet = '2'
-    //         const expectedResult = {
-    //             error: 'Something went wrong!',
-    //         }
-    //         getUserByIdStub.throws(() => new Error('Something went wrong!'))
+            const response = await request.get(`/users/${userIdToGet}`)
 
-    //         request
-    //             .get(`/users/${userIdToGet}`)
-    //             .then((res) => {
-    //                 expect(res.status).toBe(400)
-    //                 expect(getUserByIdStub.calledOnce).toBeTruthy()
-    //                 expect(res.body).toEqual(expectedResult)
-    //                 done()
-    //             })
-    //             .catch((err) => done(err))
-    //     })
-    // })
+            expect(response.status).toBe(400)
+            expect(response.body).toEqual(expectedError)
+            expect(mockGetUserById).toHaveBeenCalled()
+        })
+    })
 
     // describe('PATCH /users/:userId', () => {
     //     let updateUserInfoStub

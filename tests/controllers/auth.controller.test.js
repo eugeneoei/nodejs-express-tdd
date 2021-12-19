@@ -1,6 +1,10 @@
 const mockCreateUser = jest.fn()
+const mockVerifyPassword = jest.fn()
+const mockGenerateTokens = jest.fn()
 const mockAuthService = jest.fn().mockImplementation(() => ({
-    createUser: mockCreateUser
+    createUser: mockCreateUser,
+    verifyPassword: mockVerifyPassword,
+    generateTokens: mockGenerateTokens,
 }))
 jest.mock('../../services/auth.service', () => mockAuthService)
 
@@ -17,7 +21,6 @@ describe('Auth controller', () => {
     })
 
     describe('POST /auth/register', () => {
-
         it('Should successfully create new user and return new User', async () => {
             const payload = {
                 email: 'jon.doe@email.com',
@@ -65,88 +68,63 @@ describe('Auth controller', () => {
 
             expect(response.status).toBe(400)
             expect(response.body).toEqual(expectedError)
+            expect(mockCreateUser).toHaveBeenCalledWith(
+                payload.email,
+                payload.firstName,
+                payload.lastName,
+                payload.password
+            )
         })
     })
 
-    // describe('POST /auth/login', () => {
-    //     let generateTokensStub, verifyPasswordStub
+    describe('POST /auth/login', () => {
+        it('Should return an access token and refresh token if provided credentials are valid', async () => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                password: 'password1',
+            }
+            const expectedTokens = {
+                accessToken: 'asd123',
+                refreshToken: 'qwe123',
+            }
+            const expectedUser = {
+                _id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+            }
+            mockVerifyPassword.mockImplementationOnce(() => expectedUser)
+            mockGenerateTokens.mockImplementationOnce(() => expectedTokens)
 
-    //     beforeAll(() => {
-    //         generateTokensStub = sinon.stub(
-    //             AuthService.prototype,
-    //             'generateTokens'
-    //         )
-    //         verifyPasswordStub = sinon.stub(
-    //             AuthService.prototype,
-    //             'verifyPassword'
-    //         )
-    //     })
+            const response = await request.post('/auth/login').send(payload)
 
-    //     afterEach(() => {
-    //         generateTokensStub.reset()
-    //         verifyPasswordStub.reset()
-    //     })
+            expect(response.status).toBe(200)
+            expect(response.body).toEqual(expectedTokens)
+            expect(mockVerifyPassword).toHaveBeenCalledWith(
+                payload.email,
+                payload.password
+            )
+            expect(mockGenerateTokens).toHaveBeenCalledWith({
+                id: expectedUser.id,
+            })
+        })
 
-    //     it('Should return an access token and refresh token if provided credentials are valid', (done) => {
-    //         const payload = {
-    //             email: 'jon.doe@email.com',
-    //             password: 'password1',
-    //         }
-    //         const expectedTokensResult = {
-    //             accessToken: 'asd123',
-    //             refreshToken: 'qwe123',
-    //         }
-    //         const expectedUserResult = {
-    //             id: '1',
-    //             email: 'jon.doe@email.com',
-    //             firstName: 'Jon',
-    //             lastName: 'Doe',
-    //         }
-    //         verifyPasswordStub.returns(expectedUserResult)
-    //         generateTokensStub.returns(expectedTokensResult)
+        it('Should fail to return tokens if provided credentials are invalid', async () => {
+            const payload = {
+                email: 'jon.doe@email.com',
+                password: 'password1',
+            }
+            const expectedError = {
+                error: 'Invalid email or password.',
+            }
+            mockVerifyPassword.mockImplementationOnce(() => {
+                throw new Error('Invalid email or password.')
+            })
 
-    //         request
-    //             .post('/auth/login')
-    //             .send(payload)
-    //             .then((res) => {
-    //                 const tokens = res.body
-    //                 expect(res.status).toBe(200)
-    //                 expect(verifyPasswordStub.calledOnceWithExactly(
-    //                     payload.email,
-    //                     payload.password,
-    //                 ))
-    //                 expect(
-    //                     generateTokensStub.calledOnceWithExactly({
-    //                         id: expectedUserResult.id
-    //                     })
-    //                 ).toBeTruthy()
-    //                 expect(tokens).toEqual(expectedTokensResult)
-    //                 expect(tokens.accessToken).toBeDefined()
-    //                 expect(tokens.refreshToken).toBeDefined()
-    //                 done()
-    //             })
-    //             .catch((err) => done(err))
-    //     })
+            const response = await request.post('/auth/login').send(payload)
 
-    //     it('Should fail to return tokens if email and password in payload are invalid and respond with status code 400 and "Invalid email or password." message', (done) => {
-    //         const payload = {
-    //             email: 'jon.doe@email.com',
-    //             password: 'password1',
-    //         }
-    //         const expectedResult = {
-    //             error: 'Invalid email or password.'
-    //         }
-    //         verifyPasswordStub.throws(() => new Error('Invalid email or password.'))
-
-    //         request
-    //             .post('/auth/login')
-    //             .send(payload)
-    //             .then((res) => {
-    //                 expect(res.status).toBe(400)
-    //                 expect(res.body).toEqual(expectedResult)
-    //                 done()
-    //             })
-    //             .catch((err) => done(err))
-    //     })
-    // })
+            expect(response.status).toBe(400)
+            expect(response.body).toEqual(expectedError)
+        })
+    })
 })

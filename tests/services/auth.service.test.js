@@ -9,6 +9,11 @@ const mockUserRespository = jest.fn().mockImplementation(() => ({
 }))
 jest.mock('../../repositories/user.repository', () => mockUserRespository)
 
+const mockBcryptHash = jest.fn()
+jest.mock('bcrypt', () => ({
+    hash: mockBcryptHash,
+}))
+
 const AuthService = require('../../services/auth.service')
 // const UserRepository = require('../../repositories/user.repository')
 
@@ -102,33 +107,23 @@ describe('Auth Service', () => {
         })
     })
 
-    // describe('hashPassword method', () => {
-    //     let bcryptHashStub
+    describe('hashPassword method', () => {
+        it('Should return hashed password given a string', () => {
+            const payload = 'password123'
+            const expectedHashedPassword = `${payload}^&*(UHsdf)123`
+            mockBcryptHash.mockImplementationOnce(() => expectedHashedPassword)
 
-    //     beforeAll(() => {
-    //         // Question: why is there a need to restore sinon object? Why does restoring stub fail?
-    //         sinon.restore()
-    //         bcryptHashStub = sinon.stub(bcrypt, 'hash')
-    //     })
+            const response = authService.hashPassword(payload)
+            expect(response).toBe(expectedHashedPassword)
+            expect(response).not.toBe(payload)
+        })
 
-    //     it('Should return hashed password given a string', () => {
-    //         const payload = 'password123'
-    //         const expectedResult = `${payload}^&*(UHsdf)123`
-    //         bcryptHashStub.returns(expectedResult)
+        it('Should throw an error if given password is not a string', () => {
+            const payload = 123456
 
-    //         const response = authService.hashPassword(payload)
-    //         expect(response).toBe(expectedResult)
-    //         expect(response).not.toBe(payload)
-    //     })
-
-    //     it('Should throw an error if given password is not a string', () => {
-    //         const payload = 123456
-
-    //         expect(() => {
-    //             authService.hashPassword(payload)
-    //         }).toThrow()
-
-    //     })
-
-    // })
+            expect(() => {
+                authService.hashPassword(payload)
+            }).toThrow()
+        })
+    })
 })

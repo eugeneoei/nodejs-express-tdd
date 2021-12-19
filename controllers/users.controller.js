@@ -7,18 +7,6 @@ const usersController = (app) => {
 
     app.use(router)
 
-    router.post('/users', (req, res) => {
-        try {
-            const { email, firstName, lastName, password } = req.body
-            const user = userService.createUser(email, firstName, lastName, password)
-            res.status(201).json(user)
-        } catch (error) {
-            res.status(400).json({
-                error: error.message
-            })
-        }
-    })
-
     router.get('/users', (req, res) => {
         try {
             const users = userService.getAllUsers()

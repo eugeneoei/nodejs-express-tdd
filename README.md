@@ -17,8 +17,7 @@ Folder structure is as follows:
 
 # Test Libraries
 
-- `jestjs`
-- `sinon` to create stubs for expected results in each individual test for isolation
+- `jestjs` for assertions and mocks
 - `supertest` to make request to `Express`
 
 # Resources

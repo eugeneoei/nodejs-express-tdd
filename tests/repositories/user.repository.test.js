@@ -69,8 +69,10 @@
 
 // Note: when using "create" approach does not require constructor function. "create" is a model method
 const mockCreate = jest.fn()
+const mockFindOne = jest.fn()
 jest.mock('../../models/user.model', () => ({
-    create: mockCreate
+    create: mockCreate,
+    findOne: mockFindOne
 }))
 
 const UserRepository = require('../../repositories/user.repository')
@@ -132,41 +134,31 @@ describe('User Repository', () => {
         })
     })
 
-    // describe('getUserByEmail method', () => {
-    //     let userModelFindOneStub
+    describe('getUserByEmail method', () => {
+        it('Should return user if found', async () => {
+            const payload = 'jon.doe@email.com'
+            const expectedUser = {
+                _id: '1',
+                email: 'jon.doe@email.com',
+                firstName: 'Jon',
+                lastName: 'Doe',
+            }
+            mockFindOne.mockImplementationOnce(() => expectedUser)
 
-    //     beforeAll(() => {
-    //         userModelFindOneStub = sinon.stub(User, 'findOne')
-    //     })
+            const user = await userRepository.getUserByEmail(payload)
 
-    //     afterEach(() => {
-    //         userModelFindOneStub.reset()
-    //     })
+            expect(mockFindOne).toHaveBeenCalledTimes(1)
+            expect(user).toBe(expectedUser)
+        })
 
-    //     it('Should return user that matches given email string', async () => {
-    //         const payload = 'jon.doe@email.com'
-    //         const expectedUser = {
-    //             _id: '1',
-    //             email: 'jon.doe@email.com',
-    //             firstName: 'Jon',
-    //             lastName: 'Doe',
-    //         }
-    //         mockFindOne.mockImplementationOnce(() => expectedUser)
+        it('Should return null if user is not found', async () => {
+            const payload = 'hulk@email.com'
+            const expectedUser = null
+            mockFindOne.mockImplementationOnce(() => expectedUser)
 
-    //         const response = await userRepository.getUserByEmail(payload)
+            const user = await userRepository.getUserByEmail(payload)
 
-    //         expect(mockFindOne).toHaveBeenCalled
-    //         expect(response).toBe(expectedResult)
-    //     })
-
-    //     // it('Should return null if user is not found based on given email string', async () => {
-    //     //     const payload = 'hulk@email.com'
-    //     //     const expectedResult = null
-    //     //     userModelFindOneStub.returns(expectedResult)
-
-    //     //     const response = await userRepository.getUserByEmail(payload)
-
-    //     //     expect(response).toBe(expectedResult)
-    //     // })
-    // })
+            expect(user).toBe(expectedUser)
+        })
+    })
 })

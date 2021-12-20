@@ -1,6 +1,6 @@
 const mockUserRespositoryCreateUser = jest.fn()
 const mockGetUserByEmail = jest.fn()
-const mockUserRespository = jest.fn().mockImplementation(() => ({
+const mockUserRespository = jest.fn(() => ({
     createUser: mockUserRespositoryCreateUser,
     getUserByEmail: mockGetUserByEmail,
 }))

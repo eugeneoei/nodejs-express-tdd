@@ -1,7 +1,9 @@
 const mockCreateUser = jest.fn()
 const mockVerifyPassword = jest.fn()
 const mockGenerateTokens = jest.fn()
-const mockAuthService = jest.fn().mockImplementation(() => ({
+const mockAuthService = jest.fn(() => ({
+    // Note: if test cases have behaviour assertions, a higher order mock function needs to be returned
+    // jest.fn().mockImplementation(() => ({...}))
     createUser: mockCreateUser,
     verifyPassword: mockVerifyPassword,
     generateTokens: mockGenerateTokens,

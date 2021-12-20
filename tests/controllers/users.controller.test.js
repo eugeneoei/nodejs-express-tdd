@@ -1,7 +1,7 @@
 const mockGetAllUsers = jest.fn()
 const mockGetUserById = jest.fn()
 const mockUpdateUserInfo = jest.fn()
-const mockUserService = jest.fn().mockImplementation(() => ({
+const mockUserService = jest.fn(() => ({
     getAllUsers: mockGetAllUsers,
     getUserById: mockGetUserById,
     updateUserInfo: mockUpdateUserInfo,

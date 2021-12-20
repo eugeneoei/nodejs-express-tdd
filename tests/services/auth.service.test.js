@@ -41,9 +41,10 @@ describe('Auth Service', () => {
             /**
              * Question: is this the right way to mock this.hashPassword?
              */
-            const spyHashPassword = jest
-                .spyOn(AuthService.prototype, 'hashPassword')
-                .mockImplementationOnce(() => expectedHashedPassword)
+            jest.spyOn(
+                AuthService.prototype,
+                'hashPassword'
+            ).mockImplementationOnce(() => expectedHashedPassword)
 
             const user = authService.createUser(
                 payload.email,
@@ -53,14 +54,6 @@ describe('Auth Service', () => {
             )
 
             expect(user).toEqual(expectedUser)
-            expect(mockUserRespositoryCreateUser).toHaveBeenCalled()
-            expect(mockUserRespositoryCreateUser).toHaveBeenCalledWith(
-                payload.email,
-                payload.firstName,
-                payload.lastName,
-                expectedHashedPassword
-            )
-            expect(spyHashPassword).toHaveBeenCalled()
         })
     })
 

@@ -48,7 +48,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(200)
             expect(response.body).toEqual(expectedUsers)
-            expect(mockGetAllUsers).toHaveBeenCalled()
         })
 
         it('Should fail to return users and respond with status code 400', async () => {
@@ -81,7 +80,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(200)
             expect(response.body).toEqual(expectedUser)
-            expect(mockGetUserById).toHaveBeenCalled()
         })
 
         it('Should return status code 404 if user is not found based on given userId in url params', async () => {
@@ -95,7 +93,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(404)
             expect(response.body).toEqual(expectedError)
-            expect(mockGetUserById).toHaveBeenCalled()
         })
 
         it('Should fail to return user object and respond with status code 400', async () => {
@@ -111,7 +108,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(400)
             expect(response.body).toEqual(expectedError)
-            expect(mockGetUserById).toHaveBeenCalled()
         })
     })
 
@@ -135,7 +131,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(200)
             expect(response.body).toEqual(expectedUser)
-            expect(mockUpdateUserInfo).toHaveBeenCalled()
         })
 
         it('Should return status code 404 if user is not found based on given userId in url params', async () => {
@@ -154,7 +149,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(404)
             expect(response.body).toEqual(expectedError)
-            expect(mockUpdateUserInfo).toHaveBeenCalled()
         })
 
         it('Should fail to return updated user object and respond with status code 404', async () => {
@@ -175,7 +169,6 @@ describe('Users Controller', () => {
 
             expect(response.status).toBe(400)
             expect(response.body).toEqual(expectedError)
-            expect(mockUpdateUserInfo).toHaveBeenCalled()
         })
     })
 })

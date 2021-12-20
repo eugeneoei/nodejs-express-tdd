@@ -37,8 +37,6 @@
 //                 payload.password
 //             )
 
-//             expect(mockUserModel).toHaveBeenCalledTimes(1)
-//             expect(mockSave).toHaveBeenCalledTimes(1)
 //             expect(user).toEqual(expectedUser)
 //         })
 
@@ -107,7 +105,6 @@ describe('User Repository', () => {
                 payload.password
             )
 
-            expect(mockCreate).toHaveBeenCalledTimes(1)
             expect(user).toEqual(expectedUser)
         })
 
@@ -147,7 +144,6 @@ describe('User Repository', () => {
 
             const user = await userRepository.getUserByEmail(payload)
 
-            expect(mockFindOne).toHaveBeenCalledTimes(1)
             expect(user).toBe(expectedUser)
         })
 

@@ -41,12 +41,6 @@ describe('Auth controller', () => {
 
             expect(response.status).toBe(201)
             expect(response.body).toEqual(expectedUser)
-            expect(mockCreateUser).toHaveBeenCalledWith(
-                payload.email,
-                payload.firstName,
-                payload.lastName,
-                payload.password
-            )
         })
 
         it('Should fail to create a user and respond with status code 400', async () => {
@@ -68,12 +62,6 @@ describe('Auth controller', () => {
 
             expect(response.status).toBe(400)
             expect(response.body).toEqual(expectedError)
-            expect(mockCreateUser).toHaveBeenCalledWith(
-                payload.email,
-                payload.firstName,
-                payload.lastName,
-                payload.password
-            )
         })
     })
 
@@ -100,13 +88,6 @@ describe('Auth controller', () => {
 
             expect(response.status).toBe(200)
             expect(response.body).toEqual(expectedTokens)
-            expect(mockVerifyPassword).toHaveBeenCalledWith(
-                payload.email,
-                payload.password
-            )
-            expect(mockGenerateTokens).toHaveBeenCalledWith({
-                id: expectedUser.id,
-            })
         })
 
         it('Should fail to return tokens if provided credentials are invalid', async () => {

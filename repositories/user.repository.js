@@ -3,13 +3,19 @@ const User = require('../models/user.model')
 class UserRepository {
 
     async createUser(email, firstName, lastName, password) {
-        const newUser = await new User({
-            email,
-            firstName,
-            lastName,
-            password
-        })
-        return newUser.save()
+        try {
+            const newUser = await new User({
+                email,
+                firstName,
+                lastName,
+                password
+            })
+            return newUser.save()
+        } catch (error) {
+            return {
+                error: error.message
+            }
+        }
     }
 
     async getUserByEmail(email) {

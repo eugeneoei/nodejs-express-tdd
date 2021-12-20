@@ -23,7 +23,7 @@ class AuthService {
 
     hashPassword(password) {
         if (typeof password !== 'string') {
-            throw new Error('Password must be of string type')
+            throw new Error('Password must be of string type.')
         }
         return bcrypt.hash(
             password,

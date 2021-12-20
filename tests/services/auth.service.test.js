@@ -119,7 +119,7 @@ describe('Auth Service', () => {
 
             expect(() => {
                 authService.hashPassword(payload)
-            }).toThrow()
+            }).toThrow('Password must be of string type.')
         })
     })
 })
